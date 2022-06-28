@@ -3,9 +3,7 @@ module Rambulance
     initializer 'rambulance', after: :prepend_helpers_path do |app|
       ActiveSupport.on_load(:action_controller) do
         require "rambulance/exceptions_app"
-      # end
 
-      # ActiveSupport.on_load(:action_controller) do
         app.config.exceptions_app =
           if app.config.respond_to?(:autoloader) && app.config.autoloader == :classic
             ->(env) {
