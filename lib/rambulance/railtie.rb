@@ -3,28 +3,30 @@ module Rambulance
     initializer 'rambulance', after: :prepend_helpers_path do |app|
       ActiveSupport.on_load(:action_controller) do
         require "rambulance/exceptions_app"
-      end
+      # end
 
-      app.config.exceptions_app =
-        if app.config.respond_to?(:autoloader) && app.config.autoloader == :classic
-          ->(env) {
-            begin
-              ActiveSupport::Dependencies.load_missing_constant(Object, :ExceptionsApp)
-              ::ExceptionsApp.call(env)
-            rescue NameError
-              require "rambulance/exceptions_app" if !defined?(::Rambulance::ExceptionsApp)
-              ::Rambulance::ExceptionsApp.call(env)
-            end
-          }
-        else
-          ->(env) {
-            begin
-              ::ExceptionsApp.call(env)
-            rescue NameError
-              require "rambulance/exceptions_app" if !defined?(::Rambulance::ExceptionsApp)
-              ::Rambulance::ExceptionsApp.call(env)
-            end
-          }
+      # ActiveSupport.on_load(:action_controller) do
+        app.config.exceptions_app =
+          if app.config.respond_to?(:autoloader) && app.config.autoloader == :classic
+            ->(env) {
+              begin
+                ActiveSupport::Dependencies.load_missing_constant(Object, :ExceptionsApp)
+                ::ExceptionsApp.call(env)
+              rescue NameError
+                require "rambulance/exceptions_app" if !defined?(::Rambulance::ExceptionsApp)
+                ::Rambulance::ExceptionsApp.call(env)
+              end
+            }
+          else
+            ->(env) {
+              begin
+                ::ExceptionsApp.call(env)
+              rescue NameError
+                require "rambulance/exceptions_app" if !defined?(::Rambulance::ExceptionsApp)
+                ::Rambulance::ExceptionsApp.call(env)
+              end
+            }
+          end
         end
 
       ActiveSupport.on_load(:after_initialize) do
